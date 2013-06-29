@@ -80,7 +80,6 @@ def startdealer():
 		dealer1 = Dealer_send(con,3000)
 		dealer.start()
 		dealer1.start()
-	 	print(sharers_pubk)
 
 
 

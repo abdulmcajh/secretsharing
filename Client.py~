@@ -50,7 +50,7 @@ class Client_rec(threading.Thread):
 				common_key=dh_object_client.genKey(a)				
 			if (message == "exit"):
 				s.close()	
-				quit()
+				break
 			else:
 				print("Server wrote: " + message+ "\r")
 
