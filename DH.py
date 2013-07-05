@@ -109,6 +109,8 @@ if __name__=="__main__":
 	a = DiffieHellman()
 	b = DiffieHellman()
 	
+	a.showParams()
+
 	print(a.publicKey)
 
 	a.genKey(b.publicKey)

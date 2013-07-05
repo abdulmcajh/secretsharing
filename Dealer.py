@@ -28,7 +28,7 @@ class Dealer_rec(threading.Thread):
 		while True:
 			message = str(self.socket.recv(self.buff).strip())
 			if ("Client pubk:" in message):
-				sharers_pubk.append(str(message.strip("Client pubk:")[0:]))		
+				sharers_pubk.append(long(message.strip("Client pubk:")[0:]))		
 			elif message == "1":
 				sharers.append(addr)
 				self.socket.send("I'll send you the share soon"+"\r")
@@ -54,7 +54,7 @@ class Dealer_send(threading.Thread):
 		self.socket.send("Type 1 if you want to share a secret with me \n")
 		while True:
 			message=raw_input("Server >")
-			if message.strip() == "exit":
+			if ( message.strip() == "exit" or message == "Exit"):
 				self.socket.close()
 				quit()
 			self.socket.send(message+"\n")
@@ -80,12 +80,13 @@ def startdealer():
 		dealer1 = Dealer_send(con,3000)
 		dealer.start()
 		dealer1.start()
-	 	print(sharers_pubk)
+	 	print(sharers_pubk[0])
 
 
 
 if __name__ =="__main__":
 	print dh_object_dealer.publicKey
+	
 	startdealer()
 
 

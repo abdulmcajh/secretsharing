@@ -45,18 +45,21 @@ class Client_rec(threading.Thread):
 		while True:
 			message = s.recv(self.buff).strip()
 			if ("Server pubk:" in message):
-				a=long(message.strip("Server pubk:")[0:])
+				a=message.strip("Server pubk:")[0:]
 				print a
-				common_key=dh_object_client.genKey(a)				
-			if (message == "exit"):
+				common_key=dh_object_client.genKey(a)
+				print dh_object_client.key()
+			if (message == "exit" or message == "Exit"):
 				s.close()	
 				quit()
+				break
 			else:
 				print("Server wrote: " + message+ "\r")
 
 	
 	def run1(self):
 		global dh_object_client
+		global common_key
 		s.send("Client pubk:"+str(dh_object_client.publicKey))
 		while True:
 			message = raw_input("Client > ")
@@ -79,8 +82,8 @@ class Client_send(threading.Thread):
 
 
 if __name__ =="__main__":
-	print type(server_pubk)
-	#dh_object_client.genKey(long(server_pubk))
+#	print dh_object_client.publicKey
+#	dh_object_client.genKey(server_pubk)
 	#dh_object_client.getKey()
 	#print "Client pub key" + str(dh_object_client.publicKey)
 	#print "Shared key" + str(DH.dh_object_client.getKey())
