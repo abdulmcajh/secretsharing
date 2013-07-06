@@ -45,10 +45,10 @@ class Client_rec(threading.Thread):
 		while True:
 			message = s.recv(self.buff).strip()
 			if ("Server pubk:" in message):
-				a=message.strip("Server pubk:")[0:]
+				a=long(message.strip("Server pubk:")[0:])
 				print a
 				common_key=dh_object_client.genKey(a)
-				print dh_object_client.key()
+				print hexlify(dh_object_client.key)
 			if (message == "exit" or message == "Exit"):
 				s.close()	
 				quit()

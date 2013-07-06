@@ -30,9 +30,12 @@ class Dealer_rec(threading.Thread):
 			if ("Client pubk:" in message):
 				sharers_pubk.append(long(message.strip("Client pubk:")[0:]))		
 			elif message == "1":
-				sharers.append(addr)
-				self.socket.send("I'll send you the share soon"+"\r")
-				print(sharers)
+				if addr in sharers:
+					pass
+				else:
+					sharers.append(addr)
+					self.socket.send("I'll send you the share soon"+"\r")
+					print(sharers)
 			elif (message.strip()=="exit" or message.strip()=="Exit"):
 				self.socket.close()
 				exit()

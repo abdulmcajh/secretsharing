@@ -111,14 +111,16 @@ if __name__=="__main__":
 	
 	a.showParams()
 
-	print(a.publicKey)
+	print type(a.publicKey)
 
-	a.genKey(b.publicKey)
-	b.genKey(a.publicKey)
+	print type(a.genKey(b.publicKey))
+	print type(b.genKey(a.publicKey))
 
 	if(a.getKey() == b.getKey()):
 		print "Shared keys match."
 		print "Key:", hexlify(a.key)
+		print "Key:", hexlify(b.key)
+		print type(hexlify(a.key))
 	else:
 		print "Shared secrets didn't match!"
 		print "Shared secret: ", a.genSecret(b.publicKey)
