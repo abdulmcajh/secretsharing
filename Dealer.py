@@ -26,9 +26,13 @@ class Dealer_rec(threading.Thread):
 		global dh_object_dealer
 		global sharers_pubk
 		while True:
-			message = str(self.socket.recv(self.buff).strip())
+			message = self.socket.recv(self.buff).strip()
 			if ("Client pubk:" in message):
-				sharers_pubk.append(long(message.strip("Client pubk:")[0:]))		
+				a=(long(message.strip("Client pubk:")[0:]))
+				print "CLIENT PUBLIC KEY in SERVER RUN REC" + str(a)
+				sharers_pubk.append(long(message.strip("Client pubk:")[0:]))
+				common_key = dh_object_dealer.genKey(a)
+				print hexlify(dh_object_dealer.key)		
 			elif message == "1":
 				if addr in sharers:
 					pass
@@ -39,8 +43,10 @@ class Dealer_rec(threading.Thread):
 			elif (message.strip()=="exit" or message.strip()=="Exit"):
 				self.socket.close()
 				exit()
-			print("Received"+" "+message+" "+"from"+" "+str(addr[0])+","+str(addr[1])+"\r")
-
+			if message:
+				print("Received"+" "+message+" "+"from"+" "+str(addr[0])+","+str(addr[1])+"\r")
+			else:
+				break
 
 class Dealer_send(threading.Thread):
 	def __init__(self,socket,buff=3000):
@@ -51,9 +57,8 @@ class Dealer_send(threading.Thread):
 	
 	def run(self):
 		global dh_object_dealer
-		number=0
-		u=True
 		self.socket.send("Server pubk:"+str(dh_object_dealer.publicKey))
+		print "SERVER PUBLIC KEY in SERVER RUN SEND" + str(dh_object_dealer.publicKey)
 		self.socket.send("Type 1 if you want to share a secret with me \n")
 		while True:
 			message=raw_input("Server >")
@@ -61,7 +66,6 @@ class Dealer_send(threading.Thread):
 				self.socket.close()
 				quit()
 			self.socket.send(message+"\n")
-		
 
 
 
@@ -77,19 +81,19 @@ def startdealer():
 		con,addr = s.accept()
 		a.append(addr)
 		print("Connection from {0}".format(addr))
+		print con
 		print(a)
 		print(sharers_pubk)
 		dealer = Dealer_rec(con,3000,"Dealer")
 		dealer1 = Dealer_send(con,3000)
 		dealer.start()
 		dealer1.start()
-	 	print(sharers_pubk[0])
+		print(sharers_pubk[0])
 
 
 
 if __name__ =="__main__":
 	print dh_object_dealer.publicKey
-	
 	startdealer()
 
 
