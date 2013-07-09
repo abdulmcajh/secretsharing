@@ -1,3 +1,7 @@
+from Crypto.Cipher import AES
+import base64
+import os
+import time 
 from provapoly import *
 from DH import *
 import threading
@@ -11,6 +15,27 @@ sharers=[]
 sharers_pubk=[]
 
 dh_object_dealer=DiffieHellman()
+
+
+
+def AEScipher(secret):
+	cipher = AES.new(secret)
+	return cipher
+
+def AESencoding(cipher,message):
+	BLOCK_SIZE = 32
+	PADDING = '{'
+	pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
+	EncodeAES = lambda cipher, message: base64.b64encode(cipher.encrypt(pad(message)))
+	return str(EncodeAES)
+
+
+def AESdecoding(cipher,message):
+	BLOCK_SIZE = 32
+	PADDING = '{'
+	pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
+	DecodeAES = lambda cipher, message: cipher.decrypt(base64.b64decode(message)).rstrip(PADDING)
+	return str(DecodeAES)
 
 
 
@@ -43,10 +68,15 @@ class Dealer_rec(threading.Thread):
 			elif (message.strip()=="exit" or message.strip()=="Exit"):
 				self.socket.close()
 				exit()
-			if message:
-				print("Received"+" "+message+" "+"from"+" "+str(addr[0])+","+str(addr[1])+"\r")
+			if message and dh_object_dealer.key:
+				print AESdecoding(AEScipher(dh_object_dealer.key),message)
+				print("Received"+" "+str(AESdecoding(AEScipher(dh_object_dealer.key),message))+" "+"from"+" "+str(addr[0])+","+str(addr[1])+"\r")
+				print AESdecoding(AEScipher(dh_object_dealer.key),message)
 			else:
-				break
+				print("Received"+" "+message+" "+"from"+" "+str(addr[0])+","+str(addr[1])+"\r")
+
+
+
 
 class Dealer_send(threading.Thread):
 	def __init__(self,socket,buff=3000):
@@ -65,7 +95,10 @@ class Dealer_send(threading.Thread):
 			if ( message.strip() == "exit" or message == "Exit"):
 				self.socket.close()
 				quit()
-			self.socket.send(message+"\n")
+			if dh_object_dealer.key:
+				self.socket.send(AESencoding(AEScipher(dh_object_dealer.key),message))
+			else:
+				self.socket.send(message+"\n")
 
 
 

@@ -1,3 +1,7 @@
+from Crypto.Cipher import AES
+import base64
+import os
+import time 
 from provapoly import *
 from DH import *
 import threading
@@ -10,6 +14,31 @@ dh_object_client=DiffieHellman()
 addr=""
 server_pubk=0
 common_key=0
+
+
+
+
+def AEScipher(secret):
+	cipher = AES.new(secret)
+	return cipher
+
+def AESencoding(cipher,message):
+	BLOCK_SIZE = 32
+	PADDING = '{'
+	pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
+	EncodeAES = lambda cipher, message: base64.b64encode(cipher.encrypt(pad(message)))
+	return str(EncodeAES)
+
+
+def AESdecoding(cipher,message):
+	BLOCK_SIZE = 32
+	PADDING = '{'
+	pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
+	DecodeAES = lambda cipher, message: cipher.decrypt(base64.b64decode(message)).rstrip(PADDING)
+	return str(DecodeAES)
+
+
+
 
 class Client(threading.Thread):
 	def __init__(self,buff = 3000):
@@ -53,9 +82,10 @@ class Client_rec(threading.Thread):
 				s.close()	
 				quit()
 				break
-			else:
-				print("Server wrote: " + message+ "\r")
-
+			if dh_object_client.key:
+				print("Server wrote: ",AESdecoding(AEScipher(dh_object_client.key),message),"\r")
+			else:	
+				print("Server wrote: "+message+"\r")
 	
 	def run1(self):
 		global dh_object_client
@@ -64,7 +94,10 @@ class Client_rec(threading.Thread):
 		print "CLIENT PUB KEY IN CLIENT RUN SEND "+str(dh_object_client.publicKey)
 		while True:
 			message = raw_input("Client > ")
-			s.send(message)
+			if dh_object_client.key:
+				s.send(AESencoding(AEScipher(dh_object_client.key),message))
+			else:
+				s.send(message)
 
 
 class Client_send(threading.Thread):
