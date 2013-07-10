@@ -23,19 +23,19 @@ def AEScipher(secret):
 	return cipher
 
 def AESencoding(cipher,message):
-	BLOCK_SIZE = 32
+	BLOCK_SIZE = 64
 	PADDING = '{'
 	pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
 	EncodeAES = lambda cipher, message: base64.b64encode(cipher.encrypt(pad(message)))
-	return str(EncodeAES)
+	return EncodeAES(cipher,message)
 
 
 def AESdecoding(cipher,message):
-	BLOCK_SIZE = 32
+	BLOCK_SIZE = 64
 	PADDING = '{'
 	pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
 	DecodeAES = lambda cipher, message: cipher.decrypt(base64.b64decode(message)).rstrip(PADDING)
-	return str(DecodeAES)
+	return DecodeAES(cipher,message)
 
 
 
