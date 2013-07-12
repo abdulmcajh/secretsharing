@@ -23,7 +23,7 @@ def AEScipher(secret):
 	return cipher
 
 def AESencoding(cipher,message):
-	BLOCK_SIZE = 64
+	BLOCK_SIZE = 32
 	PADDING = '{'
 	pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
 	EncodeAES = lambda cipher, message: base64.b64encode(cipher.encrypt(pad(message)))
@@ -31,7 +31,7 @@ def AESencoding(cipher,message):
 
 
 def AESdecoding(cipher,message):
-	BLOCK_SIZE = 64
+	BLOCK_SIZE = 32
 	PADDING = '{'
 	pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
 	DecodeAES = lambda cipher, message: cipher.decrypt(base64.b64decode(message)).rstrip(PADDING)
@@ -69,7 +69,7 @@ class Dealer_rec(threading.Thread):
 				self.socket.close()
 				exit()
 			if message and dh_object_dealer.key:
-				print AESdecoding(AEScipher(dh_object_dealer.key),message)
+				#print AESdecoding(AEScipher(dh_object_dealer.key),message)
 				print("Received"+" "+str(AESdecoding(AEScipher(dh_object_dealer.key),message))+" "+"from"+" "+str(addr[0])+","+str(addr[1])+"\r")
 				print AESdecoding(AEScipher(dh_object_dealer.key),message)
 			else:

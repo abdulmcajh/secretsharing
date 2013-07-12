@@ -23,7 +23,7 @@ def AEScipher(secret):
 	return cipher
 
 def AESencoding(cipher,message):
-	BLOCK_SIZE = 64
+	BLOCK_SIZE = 32
 	PADDING = '{'
 	pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
 	EncodeAES = lambda cipher, message: base64.b64encode(cipher.encrypt(pad(message)))
@@ -31,7 +31,7 @@ def AESencoding(cipher,message):
 
 
 def AESdecoding(cipher,message):
-	BLOCK_SIZE = 64
+	BLOCK_SIZE = 32
 	PADDING = '{'
 	pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
 	DecodeAES = lambda cipher, message: cipher.decrypt(base64.b64decode(message)).rstrip(PADDING)
@@ -78,13 +78,17 @@ class Client_rec(threading.Thread):
 				print "SERVER PUB KEY IN CLIENT RUN REC"+str(a)
 				common_key=dh_object_client.genKey(a)
 				print hexlify(dh_object_client.key)
-				print KEY len()
 			if (message == "exit" or message == "Exit"):
 				s.close()	
 				quit()
 				break
 			if dh_object_client.key:
-				print("Server wrote: ",AESdecoding(AEScipher(dh_object_client.key),message),"\r")
+				try:
+					print "GOT KEYYYYYYYYYYYYYYYYYYYYYYYy"
+					print str(len(message))
+					print("Server wrote: ",AESdecoding(AEScipher(dh_object_client.key),message))
+				except:
+					TypeError
 			else:	
 				print("Server wrote: "+message+"\r")
 	
