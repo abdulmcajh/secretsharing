@@ -75,7 +75,7 @@ class Client_rec(threading.Thread):
 			message = s.recv(self.buff).strip()
 			if ("Server pubk:" in message):
 				a=long(message.strip("Server pubk:")[0:])
-				print "SERVER PUB KEY IN CLIENT RUN REC"+str(a)
+				#print "SERVER PUB KEY IN CLIENT RUN REC"+str(a)
 				common_key=dh_object_client.genKey(a)
 				print hexlify(dh_object_client.key)
 			if (message == "exit" or message == "Exit"):
@@ -84,8 +84,7 @@ class Client_rec(threading.Thread):
 				break
 			if dh_object_client.key:
 				try:
-					print "GOT KEYYYYYYYYYYYYYYYYYYYYYYYy"
-					print str(len(message))
+					#print str(len(message))
 					print("Server wrote: ",AESdecoding(AEScipher(dh_object_client.key),message))
 				except:
 					TypeError
@@ -96,7 +95,7 @@ class Client_rec(threading.Thread):
 		global dh_object_client
 		global common_key
 		s.send("Client pubk:"+str(dh_object_client.publicKey))
-		print "CLIENT PUB KEY IN CLIENT RUN SEND "+str(dh_object_client.publicKey)
+		#print "CLIENT PUB KEY IN CLIENT RUN SEND "+str(dh_object_client.publicKey)
 		while True:
 			message = raw_input("Client > ")
 			if dh_object_client.key:
