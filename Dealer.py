@@ -54,7 +54,7 @@ class Dealer_rec(threading.Thread):
 			message = self.socket.recv(self.buff).strip()
 			if ("Client pubk:" in message):
 				a=(long(message.strip("Client pubk:")[0:]))
-				print "CLIENT PUBLIC KEY in SERVER RUN REC" + str(a)
+				#print "CLIENT PUBLIC KEY in SERVER RUN REC" + str(a)
 				sharers_pubk.append(long(message.strip("Client pubk:")[0:]))
 				common_key = dh_object_dealer.genKey(a)
 				print hexlify(dh_object_dealer.key)		
@@ -64,14 +64,17 @@ class Dealer_rec(threading.Thread):
 				else:
 					sharers.append(addr)
 					self.socket.send("I'll send you the share soon"+"\r")
-					print(sharers)
+					#print(sharers)
 			elif (message.strip()=="exit" or message.strip()=="Exit"):
 				self.socket.close()
 				exit()
 			if message and dh_object_dealer.key:
-				#print AESdecoding(AEScipher(dh_object_dealer.key),message)
-				print("Received"+" "+str(AESdecoding(AEScipher(dh_object_dealer.key),message))+" "+"from"+" "+str(addr[0])+","+str(addr[1])+"\r")
-				print AESdecoding(AEScipher(dh_object_dealer.key),message)
+				try:
+					#print str(len(message))
+					print("Received:"+" "+str(AESdecoding(AEScipher(dh_object_dealer.key),message))+" "+"from"+" "+str(addr[0])+","+str(addr[1])+"\r")
+					#print AESdecoding(AEScipher(dh_object_dealer.key),message)
+				except:
+					TypeError
 			else:
 				print("Received"+" "+message+" "+"from"+" "+str(addr[0])+","+str(addr[1])+"\r")
 
@@ -88,8 +91,9 @@ class Dealer_send(threading.Thread):
 	def run(self):
 		global dh_object_dealer
 		self.socket.send("Server pubk:"+str(dh_object_dealer.publicKey))
-		print "SERVER PUBLIC KEY in SERVER RUN SEND" + str(dh_object_dealer.publicKey)
-		self.socket.send("Type 1 if you want to share a secret with me \n")
+		self.socket.send(AESencoding(AEScipher(dh_object_dealer.key),"Type 1 if you want to share a secret with me \n"))
+		#print "SERVER PUBLIC KEY in SERVER RUN SEND" + str(dh_object_dealer.publicKey)
+		self.socket.send("Type 1 if you want to share a secret with me")
 		while True:
 			message=raw_input("Server >")
 			if ( message.strip() == "exit" or message == "Exit"):
@@ -114,19 +118,19 @@ def startdealer():
 		con,addr = s.accept()
 		a.append(addr)
 		print("Connection from {0}".format(addr))
-		print con
-		print(a)
-		print(sharers_pubk)
+		#print con
+		#print(a)
+		#print(sharers_pubk)
 		dealer = Dealer_rec(con,3000,"Dealer")
 		dealer1 = Dealer_send(con,3000)
 		dealer.start()
 		dealer1.start()
-		print(sharers_pubk[0])
+		#print(sharers_pubk[0])
 
 
 
 if __name__ =="__main__":
-	print dh_object_dealer.publicKey
+	#print dh_object_dealer.publicKey
 	startdealer()
 
 
