@@ -8,7 +8,7 @@ import warnings
 import random
 import operator
 
-
+prime=1907
 
 class SecretSharingSchemaExc(Exception):
 	def __init__(self,message):
@@ -43,23 +43,25 @@ def denLagr(ID,b):   #computes Lagr interpolation den, IV is the ID
 
 
 def LagInterpol(ID,b):  #computes Lagr interpolation coefficient for the IV and the list b (b does not contain ID)
-	return (float(numLagr(b))/(denLagr(ID,b)))	
+	return ((float(numLagr(b))/(denLagr(ID,b)))%prime)	
 	
 
-def genRandcoeff(k):  #computes the k-1 random coefficient for the k-1 grade poly. The secret is added away in ssSchema(k,m)
+def genRandcoeff(k):  #computes the k-1 random coefficients for the k-1 grade poly. The secret is added away in ssSchema(k,m)
+	global prime
 	a=[]
 	i=0
 	while (i<k-1):
-		a.append(random.randint(1,100))
+		a.append(random.randint(1,100000)%prime)
 		i=i+1
 	return a
 
 
 def ComputeShares(p,x):  #evaluates the poly p in the proper point for every of the x=n people
+	global prime
 	a=[]
 	i=1
 	while (i<x):
-		a.append(p(i))
+		a.append(p(i)%prime)
 		i=i+1
 	return a
 
