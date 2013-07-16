@@ -58,19 +58,18 @@ class Dealer_rec(threading.Thread):
 				sharers_pubk.append(long(message.strip("Client pubk:")[0:]))
 				common_key = dh_object_dealer.genKey(a)
 				print hexlify(dh_object_dealer.key)		
-			elif message == "1":
+			elif message == "1" or (AESdecoding(AEScipher(dh_object_dealer.key),message)) == "1":
 				if addr in sharers:
 					pass
 				else:
 					sharers.append(addr)
-					self.socket.send("I'll send you the share soon"+"\r")
+					self.socket.send(AESencoding(AEScipher(dh_object_dealer.key),"I'll send you the share soon"+"\r"))
 					#print(sharers)
 			elif (message.strip()=="exit" or message.strip()=="Exit"):
 				self.socket.close()
 				exit()
 			if message and dh_object_dealer.key:
 				try:
-					#print str(len(message))
 					print("Received:"+" "+str(AESdecoding(AEScipher(dh_object_dealer.key),message))+" "+"from"+" "+str(addr[0])+","+str(addr[1])+"\r")
 					#print AESdecoding(AEScipher(dh_object_dealer.key),message)
 				except:
